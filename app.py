@@ -6,6 +6,9 @@ import psycopg2
 from psycopg2 import pool
 import logging, traceback
 from config import config
+import pandas as pd
+from flask import request
+import json
 
 # def get_db():
 #     print ('GETTING CONN')
@@ -46,16 +49,34 @@ def close_conn(e):
     if db is not None:
         app.config['postgreSQL_pool'].putconn(db)
 
-@app.route('/getConversationCount')
+@app.route('/getDesiredDF')
 def index():
   
     cursor = g.db.cursor()
-    cursor.execute("SELECT COUNT(*) FROM CONVERSATIONS;")
+    request_data = json.loads(request.data.decode('utf-8'))
+    outcome = request_data["outcome"]
+    start_date_str = request_data["start_date"]
+    end_date_str = request_data["end_date"]
+    date_format = 'YYYY-MM-DD'
+    query_str = f'select u.conversation_id, u.utterance_id as log_id, u.created as response_timestamp, \
+        u.top_intent as turn_label from utterances u, conversations c where \
+        u.conversation_id = c.session_id and \
+        c.outcome = \'{outcome}\' and date(c.start_time)>= to_date(\'{start_date_str}\',\'{date_format}\') and \
+        date(c.start_time)<= to_date(\'{end_date_str}\',\'{date_format}\')'
+    
+    cursor.execute(query_str)
     result = cursor.fetchall()
-    logger.info(result)
+    count = len(result)
+    if count >0: 
+        df = pd.DataFrame(result)
+        df.columns=["conversation_id", "log_id", "response_timestamp", "turn_label"]
+    else:
+        pass
+
+    
 
     cursor.close()
-    return jsonify(result)
+    return jsonify({"count" : count})
 
 api = Api(app)
 
