@@ -3,3 +3,4 @@
 .py37
 __pycache__
 .vscode
+/config/bankingsample.json
