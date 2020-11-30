@@ -1,0 +1,9 @@
+{
+  "postgres_creds": {
+    "host": "3c032e34-1742-4b66-b061-b685439d8270.68ea2cbd8c8d4c30b5b8450be6b8593a.databases.appdomain.cloud",
+    "port": 32606,
+    "user": "ibm_cloud_f27cae83_f55e_495b_b425_682b4ed43fa8",
+    "password": "b21d98eb77fe3ed5178d337b7b24eeef1b7acf05f2f91c196f8423d73cc4cec9",
+    "database": "actionable_insights"
+  }
+}

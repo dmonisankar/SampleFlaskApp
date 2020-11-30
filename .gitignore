@@ -1,0 +1,5 @@
+# adding files to ignore
+/logs
+.py37
+__pycache__
+.vscode
